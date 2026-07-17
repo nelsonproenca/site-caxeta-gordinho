@@ -138,6 +138,7 @@ export type Database = {
           created_by: string
           id: string
           notes: string | null
+          score_period_id: string | null
           session_date: string
           status: string
           tiktok_account_id: string
@@ -147,6 +148,7 @@ export type Database = {
           created_by: string
           id?: string
           notes?: string | null
+          score_period_id?: string | null
           session_date: string
           status?: string
           tiktok_account_id: string
@@ -156,6 +158,7 @@ export type Database = {
           created_by?: string
           id?: string
           notes?: string | null
+          score_period_id?: string | null
           session_date?: string
           status?: string
           tiktok_account_id?: string
@@ -166,6 +169,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "live_sessions_score_period_id_fkey"
+            columns: ["score_period_id"]
+            isOneToOne: false
+            referencedRelation: "score_periods"
             referencedColumns: ["id"]
           },
           {
@@ -241,18 +251,21 @@ export type Database = {
           id: string
           live_session_id: string
           played_at: string
+          score_period_id: string | null
           tiktok_account_id: string
         }
         Insert: {
           id?: string
           live_session_id: string
           played_at?: string
+          score_period_id?: string | null
           tiktok_account_id: string
         }
         Update: {
           id?: string
           live_session_id?: string
           played_at?: string
+          score_period_id?: string | null
           tiktok_account_id?: string
         }
         Relationships: [
@@ -261,6 +274,13 @@ export type Database = {
             columns: ["live_session_id"]
             isOneToOne: false
             referencedRelation: "live_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_score_period_id_fkey"
+            columns: ["score_period_id"]
+            isOneToOne: false
+            referencedRelation: "score_periods"
             referencedColumns: ["id"]
           },
           {
@@ -302,28 +322,31 @@ export type Database = {
       score_periods: {
         Row: {
           created_at: string
-          ends_at: string
+          ends_at: string | null
           id: string
           label: string
           starts_at: string
+          status: string
           tiktok_account_id: string
           type: string
         }
         Insert: {
           created_at?: string
-          ends_at: string
+          ends_at?: string | null
           id?: string
           label: string
           starts_at: string
+          status?: string
           tiktok_account_id: string
           type: string
         }
         Update: {
           created_at?: string
-          ends_at?: string
+          ends_at?: string | null
           id?: string
           label?: string
           starts_at?: string
+          status?: string
           tiktok_account_id?: string
           type?: string
         }

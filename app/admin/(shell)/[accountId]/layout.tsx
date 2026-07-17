@@ -25,6 +25,7 @@ export default async function AccountLayout({
     { href: `/admin/${accountId}/pontuacao`, label: "Pontuação" },
     { href: `/admin/${accountId}/jogadores`, label: "Jogadores" },
     { href: `/admin/${accountId}/lives`, label: "Lives" },
+    { href: `/admin/${accountId}/ranking`, label: "Ranking" },
   ];
 
   return (

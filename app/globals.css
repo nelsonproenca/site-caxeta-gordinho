@@ -151,6 +151,24 @@ a{ color:inherit; }
 .driver-bar{ flex:1; height:5px; background:var(--stroke-soft); border-radius:3px; overflow:hidden; }
 .driver-bar > span{ display:block; height:100%; background:linear-gradient(90deg, var(--red-dark), var(--red-bright)); }
 
+/* Podium — top 3 of a score_period ranking. Reuses .card-driver's stroked
+   big-number treatment instead of a new visual language. */
+.podium{ display:flex; align-items:flex-end; gap:16px; }
+.podium-spot{
+  flex:1; background:var(--surface); border:1px solid var(--stroke); border-radius:var(--radius-lg);
+  padding:20px 16px; text-align:center; position:relative;
+}
+.podium-spot.rank-1{ order:2; padding-top:30px; border-color:var(--yellow); }
+.podium-spot.rank-2{ order:1; border-color:var(--titanium); }
+.podium-spot.rank-3{ order:3; border-color:#B5651D; }
+.podium-number{ font-family:var(--font-display); font-style:italic; font-weight:900; font-size:40px; -webkit-text-stroke:1px var(--stroke); color:transparent; }
+.rank-1 .podium-number{ -webkit-text-stroke-color:var(--yellow); font-size:52px; }
+.rank-2 .podium-number{ -webkit-text-stroke-color:var(--titanium); }
+.rank-3 .podium-number{ -webkit-text-stroke-color:#B5651D; }
+.podium-name{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:18px; text-transform:uppercase; margin-top:4px; }
+.podium-handle{ font-size:12px; color:var(--titanium); margin-bottom:10px; }
+.podium-points{ font-family:var(--font-mono); font-weight:700; font-size:22px; }
+
 /* .card-race -> match/round card (Caxetão or campeonato round, prd.md §9). */
 .card-race{ padding:0; }
 .race-flag{ height:8px; background:repeating-linear-gradient(90deg, var(--carbon) 0 10px, var(--ink) 10px 20px); }

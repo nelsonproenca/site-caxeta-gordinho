@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   useState,
   type InputHTMLAttributes,
   type SelectHTMLAttributes,
@@ -48,9 +49,10 @@ export function FormGrid({ children }: { children: ReactNode }) {
   return <div className="form-grid">{children}</div>;
 }
 
-export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn("input", className)} {...props} />;
-}
+export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, ...props }, ref) => <input ref={ref} className={cn("input", className)} {...props} />,
+);
+Input.displayName = "Input";
 
 // Masked phone input used for every WhatsApp field — formats as the user
 // types and caps input at 11 digits, so garbage like "1199999999999999" (see

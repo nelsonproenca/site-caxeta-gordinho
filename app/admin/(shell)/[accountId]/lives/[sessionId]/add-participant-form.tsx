@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { addParticipant, type ActionState } from "@/lib/actions/lives";
 import { searchPlayers } from "@/lib/actions/players";
 import { normalizeHandle } from "@/lib/utils";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 
 type PlayerHit = { id: string; display_name: string; tiktok_handle: string };
+type MenuRect = { top: number; left: number; width: number };
 
 export function AddParticipantForm({ sessionId, accountId }: { sessionId: string; accountId: string }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(addParticipant, null);
@@ -16,6 +18,8 @@ export function AddParticipantForm({ sessionId, accountId }: { sessionId: string
   const [results, setResults] = useState<PlayerHit[]>([]);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<PlayerHit | null>(null);
+  const [menuRect, setMenuRect] = useState<MenuRect | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [prevState, setPrevState] = useState(state);
   if (state !== prevState) {
@@ -46,16 +50,37 @@ export function AddParticipantForm({ sessionId, accountId }: { sessionId: string
 
   const normalizedHandle = normalizeHandle(handle);
   const isNew = normalizedHandle.length >= 2 && !results.some((r) => r.tiktok_handle === normalizedHandle);
+  const showMenu = open && normalizedHandle.length >= 2;
+
+  // The dropdown is portaled to <body> and fixed-positioned from the input's
+  // rect — the card it lives in has overflow:hidden (to clip its rounded-corner
+  // accent bar), which would otherwise clip the dropdown too.
+  useEffect(() => {
+    if (!showMenu) return;
+    const updateRect = () => {
+      const rect = inputRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setMenuRect({ top: rect.bottom + 4, left: rect.left, width: Math.max(rect.width, 256) });
+    };
+    updateRect();
+    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", updateRect);
+    return () => {
+      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", updateRect);
+    };
+  }, [showMenu, results.length]);
 
   return (
     <form key={formKey} action={formAction} className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="session_id" value={sessionId} />
       <input type="hidden" name="account_id" value={accountId} />
-      <div className="flex flex-col gap-2 relative">
+      <div className="flex flex-col gap-2">
         <label htmlFor="tiktok_handle" className="caption">
           @tiktok
         </label>
         <Input
+          ref={inputRef}
           id="tiktok_handle"
           name="tiktok_handle"
           type="text"
@@ -72,29 +97,35 @@ export function AddParticipantForm({ sessionId, accountId }: { sessionId: string
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
         />
-        {open && normalizedHandle.length >= 2 && (
-          <div className="absolute top-full left-0 mt-1 w-64 z-20 rounded-[6px] border border-stroke bg-surface-2 shadow-lg overflow-hidden">
-            {results.map((r) => (
-              <button
-                type="button"
-                key={r.id}
-                className="block w-full text-left px-3 py-2 text-sm text-ink hover:bg-carbon"
-                onMouseDown={() => {
-                  setHandle(r.tiktok_handle);
-                  setSelected(r);
-                  setOpen(false);
-                }}
-              >
-                {r.display_name} <span className="text-ink-dim">@{r.tiktok_handle}</span>
-              </button>
-            ))}
-            {results.length === 0 && (
-              <div className="px-3 py-2 text-xs text-ink-dim">
-                Nenhum jogador encontrado. Preencha o nome para cadastrar @{normalizedHandle}.
-              </div>
-            )}
-          </div>
-        )}
+        {showMenu &&
+          menuRect &&
+          createPortal(
+            <div
+              className="fixed z-50 rounded-[6px] border border-stroke bg-surface-2 shadow-lg overflow-hidden"
+              style={{ top: menuRect.top, left: menuRect.left, width: menuRect.width }}
+            >
+              {results.map((r) => (
+                <button
+                  type="button"
+                  key={r.id}
+                  className="block w-full text-left px-3 py-2 text-sm text-ink hover:bg-carbon"
+                  onMouseDown={() => {
+                    setHandle(r.tiktok_handle);
+                    setSelected(r);
+                    setOpen(false);
+                  }}
+                >
+                  {r.display_name} <span className="text-ink-dim">@{r.tiktok_handle}</span>
+                </button>
+              ))}
+              {results.length === 0 && (
+                <div className="px-3 py-2 text-xs text-ink-dim">
+                  Nenhum jogador encontrado. Preencha o nome para cadastrar @{normalizedHandle}.
+                </div>
+              )}
+            </div>,
+            document.body,
+          )}
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="display_name" className="caption">

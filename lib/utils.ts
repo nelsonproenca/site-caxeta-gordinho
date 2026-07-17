@@ -42,6 +42,15 @@ export function formatDateTime(iso: string, timeZone = "America/Sao_Paulo") {
   return `${get("day")}/${get("month")}/${get("year")} ${get("hour")}:${get("minute")}`;
 }
 
+// Formats a Postgres `date` string (YYYY-MM-DD, no time component) as
+// dd/MM/yyyy. Pure string reordering — deliberately avoids `new Date(iso)`,
+// which parses date-only strings as UTC midnight and can shift a day when
+// displayed in a negative-offset timezone.
+export function formatDate(isoDate: string) {
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 // Formats digits as a Brazilian phone number: (11) 91234-5678 (11 digits,
 // mobile with the leading 9) or (11) 1234-5678 (10 digits, landline).
 // Used to mask every WhatsApp field so users can't paste/type runaway digits.

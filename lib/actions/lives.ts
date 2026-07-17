@@ -20,11 +20,19 @@ export async function openLiveSession(formData: FormData) {
 
   await closeStaleLiveSessions(supabase, accountId);
 
+  const { data: openPeriod } = await supabase
+    .from("score_periods")
+    .select("id")
+    .eq("tiktok_account_id", accountId)
+    .eq("status", "open")
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from("live_sessions")
     .insert({
       tiktok_account_id: accountId,
       session_date: new Date().toISOString(),
+      score_period_id: openPeriod?.id ?? null,
       created_by: user.id,
     })
     .select("id")
