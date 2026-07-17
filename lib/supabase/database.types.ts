@@ -96,6 +96,108 @@ export type Database = {
         }
         Relationships: []
       }
+      caxetao_events: {
+        Row: {
+          close_rule: string
+          created_at: string
+          created_by: string
+          event_date: string
+          id: string
+          max_principals: number | null
+          max_substitutes: number | null
+          registration_closes_at: string | null
+          registration_opens_at: string
+          status: string
+          tiktok_account_id: string
+        }
+        Insert: {
+          close_rule: string
+          created_at?: string
+          created_by: string
+          event_date: string
+          id?: string
+          max_principals?: number | null
+          max_substitutes?: number | null
+          registration_closes_at?: string | null
+          registration_opens_at: string
+          status?: string
+          tiktok_account_id: string
+        }
+        Update: {
+          close_rule?: string
+          created_at?: string
+          created_by?: string
+          event_date?: string
+          id?: string
+          max_principals?: number | null
+          max_substitutes?: number | null
+          registration_closes_at?: string | null
+          registration_opens_at?: string
+          status?: string
+          tiktok_account_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caxetao_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "caxetao_events_tiktok_account_id_fkey"
+            columns: ["tiktok_account_id"]
+            isOneToOne: false
+            referencedRelation: "tiktok_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      caxetao_registrations: {
+        Row: {
+          caxetao_event_id: string
+          id: string
+          player_id: string
+          queue_position: number | null
+          registered_at: string
+          registration_type: string
+          status: string
+        }
+        Insert: {
+          caxetao_event_id: string
+          id?: string
+          player_id: string
+          queue_position?: number | null
+          registered_at?: string
+          registration_type: string
+          status?: string
+        }
+        Update: {
+          caxetao_event_id?: string
+          id?: string
+          player_id?: string
+          queue_position?: number | null
+          registered_at?: string
+          registration_type?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caxetao_registrations_caxetao_event_id_fkey"
+            columns: ["caxetao_event_id"]
+            isOneToOne: false
+            referencedRelation: "caxetao_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "caxetao_registrations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       live_participants: {
         Row: {
           id: string
@@ -248,27 +350,37 @@ export type Database = {
       }
       matches: {
         Row: {
+          caxetao_event_id: string | null
           id: string
-          live_session_id: string
+          live_session_id: string | null
           played_at: string
           score_period_id: string | null
           tiktok_account_id: string
         }
         Insert: {
+          caxetao_event_id?: string | null
           id?: string
-          live_session_id: string
+          live_session_id?: string | null
           played_at?: string
           score_period_id?: string | null
           tiktok_account_id: string
         }
         Update: {
+          caxetao_event_id?: string | null
           id?: string
-          live_session_id?: string
+          live_session_id?: string | null
           played_at?: string
           score_period_id?: string | null
           tiktok_account_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "matches_caxetao_event_id_fkey"
+            columns: ["caxetao_event_id"]
+            isOneToOne: false
+            referencedRelation: "caxetao_events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "matches_live_session_id_fkey"
             columns: ["live_session_id"]

@@ -51,6 +51,15 @@ export function formatDate(isoDate: string) {
   return `${day}/${month}/${year}`;
 }
 
+// Converts a `datetime-local` input value ("2026-07-19T14:00", no seconds,
+// no offset) into a correct UTC ISO instant, assuming it represents
+// wall-clock time in America/Sao_Paulo — the admin's operating timezone per
+// prd.md §8. Brazil has had no DST since 2019, so the offset is a fixed
+// UTC-3 (mirrors startOfTodayInSaoPaulo).
+export function saoPauloLocalToIso(localDateTime: string): string {
+  return new Date(`${localDateTime}:00-03:00`).toISOString();
+}
+
 // Formats digits as a Brazilian phone number: (11) 91234-5678 (11 digits,
 // mobile with the leading 9) or (11) 1234-5678 (10 digits, landline).
 // Used to mask every WhatsApp field so users can't paste/type runaway digits.
