@@ -1,0 +1,327 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS
+   Ported from assets/ferrari-design-system.html (:root, lines 11-31).
+   Fonts are wired to next/font variables set on <html> in app/layout.tsx
+   instead of the original <link> tags. See prd.md §9 for the mapping
+   of each design-system component to its caxeta-specific use.
+   ============================================================ */
+:root {
+  --red: #D2001C;
+  --red-bright: #FF2800;
+  --red-dark: #7A0011;
+  --yellow: #FFF200;
+  --carbon: #0A0A0B;
+  --surface: #141417;
+  --surface-2: #1B1B1F;
+  --stroke: #2A2A2F;
+  --stroke-soft: #232327;
+  --ink: #F2F1ED;
+  --ink-dim: #B7B6B2;
+  --titanium: #8A8D93;
+  --green: #00C067;
+  --purple: #B24BF3;
+
+  --font-display: var(--next-font-display), 'Barlow Condensed', sans-serif;
+  --font-body: var(--next-font-body), 'Titillium Web', sans-serif;
+  --font-mono: var(--next-font-mono), 'JetBrains Mono', monospace;
+
+  --radius: 2px;
+  --radius-lg: 6px;
+}
+
+/* Expose the palette/type tokens as Tailwind utilities (bg-red, text-yellow,
+   font-display, etc.) without duplicating the values above. */
+@theme inline {
+  --color-red: var(--red);
+  --color-red-bright: var(--red-bright);
+  --color-red-dark: var(--red-dark);
+  --color-yellow: var(--yellow);
+  --color-carbon: var(--carbon);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-stroke: var(--stroke);
+  --color-stroke-soft: var(--stroke-soft);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-titanium: var(--titanium);
+  --color-green: var(--green);
+  --color-purple: var(--purple);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+*{ box-sizing: border-box; }
+
+/* Single dark theme by design (no light-mode toggle) — see CLAUDE.md. */
+html{ color-scheme: dark; }
+
+body{
+  background: var(--carbon);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.5;
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+}
+
+::selection{ background: var(--red); color:#fff; }
+
+a{ color:inherit; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  font-family: var(--font-display); font-weight:700; font-style:italic; text-transform:uppercase;
+  letter-spacing:0.6px; font-size:15px;
+  border:none; cursor:pointer; padding:13px 26px; border-radius: var(--radius);
+  display:inline-flex; align-items:center; gap:8px;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+  position:relative;
+}
+.btn:active{ transform:translateY(1px); }
+.btn:focus-visible{ outline:2px solid var(--yellow); outline-offset:3px; }
+
+.btn-primary{ background:var(--red); color:#fff; box-shadow:0 2px 0 var(--red-dark), 0 8px 20px -8px rgba(210,0,28,0.6); }
+.btn-primary:hover{ background:var(--red-bright); box-shadow:0 2px 0 var(--red-dark), 0 10px 24px -6px rgba(255,40,0,0.55); }
+
+.btn-dark{ background:var(--ink); color:var(--carbon); box-shadow:0 2px 0 #8f8e89; }
+.btn-dark:hover{ background:#fff; }
+
+.btn-outline{ background:transparent; color:var(--ink); border:1.5px solid var(--stroke); }
+.btn-outline:hover{ border-color:var(--red); color:var(--red); }
+
+.btn-ghost{ background:transparent; color:var(--ink-dim); padding:13px 10px; }
+.btn-ghost:hover{ color:var(--ink); }
+
+.btn-yellow{ background:var(--yellow); color:var(--carbon); box-shadow:0 2px 0 #b3a800; }
+.btn-yellow:hover{ filter:brightness(1.05); }
+
+.btn-sm{ padding:9px 18px; font-size:13px; }
+.btn-lg{ padding:16px 34px; font-size:17px; }
+.btn:disabled{ opacity:0.35; cursor:not-allowed; box-shadow:none; }
+
+.btn-icon{
+  width:42px; height:42px; padding:0; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--surface-2); border:1px solid var(--stroke); color:var(--ink);
+}
+.btn-icon:hover{ border-color:var(--red); color:var(--red); }
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px; }
+
+.card{
+  background:var(--surface); border:1px solid var(--stroke); border-radius: var(--radius-lg);
+  padding:22px; position:relative; overflow:hidden;
+}
+.card::before{
+  content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--stroke);
+  transition:background .15s ease;
+}
+.card:hover::before{ background:var(--red); }
+
+.card-stat .card-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--titanium); margin-bottom:10px; }
+.card-stat .card-value{ font-family:var(--font-mono); font-weight:700; font-size:34px; line-height:1; }
+.card-stat .card-value small{ font-size:16px; color:var(--titanium); font-weight:400; }
+.card-delta{ display:inline-flex; align-items:center; gap:5px; margin-top:12px; font-size:12px; font-weight:700; }
+.delta-up{ color:var(--green); }
+.delta-down{ color:var(--red-bright); }
+
+/* .card-driver -> player ranking card (prd.md §9): driver-number becomes
+   the ranking position, driver-name/driver-team the player handle/account. */
+.card-driver{ display:flex; flex-direction:column; gap:14px; }
+.driver-top{ display:flex; align-items:center; justify-content:space-between; }
+.driver-number{ font-family:var(--font-display); font-style:italic; font-weight:900; font-size:44px; -webkit-text-stroke:1px var(--red); color:transparent; }
+.position-tag{ font-family:var(--font-mono); font-size:11px; background:var(--red); color:#fff; padding:3px 8px; border-radius:2px; font-weight:700; }
+.driver-name{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:24px; text-transform:uppercase; }
+.driver-team{ font-size:12px; color:var(--titanium); text-transform:uppercase; letter-spacing:1px; }
+.driver-bar-row{ display:flex; align-items:center; gap:10px; font-size:11px; color:var(--titanium); }
+.driver-bar{ flex:1; height:5px; background:var(--stroke-soft); border-radius:3px; overflow:hidden; }
+.driver-bar > span{ display:block; height:100%; background:linear-gradient(90deg, var(--red-dark), var(--red-bright)); }
+
+/* .card-race -> match/round card (Caxetão or campeonato round, prd.md §9). */
+.card-race{ padding:0; }
+.race-flag{ height:8px; background:repeating-linear-gradient(90deg, var(--carbon) 0 10px, var(--ink) 10px 20px); }
+.race-body{ padding:20px 22px; }
+.race-round{ font-family:var(--font-mono); font-size:11px; color:var(--red); letter-spacing:2px; }
+.race-name{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:22px; text-transform:uppercase; margin:6px 0 4px; }
+.race-meta{ font-size:12px; color:var(--titanium); display:flex; justify-content:space-between; border-top:1px solid var(--stroke-soft); padding-top:12px; margin-top:14px; }
+
+/* ============================================================
+   BADGES / STATUS
+   Mapping (prd.md §9): green=Confirmado, yellow=Suplente, red=Eliminado,
+   purple=Campeão, neutral=sem status.
+   ============================================================ */
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700;
+  padding:5px 10px; border-radius:2px;
+}
+.badge-purple{ background:rgba(178,75,243,0.14); color:var(--purple); border:1px solid rgba(178,75,243,0.4); }
+.badge-green{ background:rgba(0,192,103,0.12); color:var(--green); border:1px solid rgba(0,192,103,0.4); }
+.badge-red{ background:rgba(210,0,28,0.14); color:#ff5c5c; border:1px solid rgba(210,0,28,0.5); }
+.badge-yellow{ background:rgba(255,242,0,0.12); color:var(--yellow); border:1px solid rgba(255,242,0,0.4); }
+.badge-neutral{ background:var(--surface-2); color:var(--ink-dim); border:1px solid var(--stroke); }
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:28px 32px; }
+.field{ display:flex; flex-direction:column; gap:8px; }
+.field label{ font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-dim); }
+.field .hint{ font-size:12px; color:var(--titanium); }
+.field .error-text{ font-size:12px; color:#ff5c5c; font-weight:600; }
+
+.field-info{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:14px; height:14px; margin-left:6px; border-radius:50%;
+  border:1px solid var(--titanium); color:var(--titanium); background:transparent;
+  font-family:var(--font-mono); font-size:10px; font-weight:700; line-height:1;
+  cursor:help; padding:0;
+}
+.field-info:hover, .field-info:focus-visible{ border-color:var(--red); color:var(--red); }
+.field-info::after{
+  content:attr(data-tooltip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  background:var(--surface-2); border:1px solid var(--stroke); color:var(--ink); padding:8px 10px; border-radius:6px;
+  font-family:var(--font-body); font-size:12px; font-weight:400; text-transform:none; letter-spacing:normal;
+  white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s ease; z-index:10;
+}
+.field-info:hover::after, .field-info:focus-visible::after{ opacity:1; }
+
+.input, .select, textarea.input{
+  background:var(--surface-2); border:1px solid var(--stroke); color:var(--ink);
+  font-family:var(--font-body); font-size:14px; padding:13px 14px; border-radius: var(--radius);
+  width:100%; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.input::placeholder{ color:#5c5c62; }
+.input:hover, .select:hover{ border-color:#3c3c42; }
+.input:focus, .select:focus, textarea.input:focus{
+  outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(210,0,28,0.18);
+}
+.field.has-error .input{ border-color:#ff5c5c; box-shadow:0 0 0 3px rgba(255,92,92,0.12); }
+.field.is-valid .input{ border-color:var(--green); }
+
+.input-wrap{ position:relative; }
+.input-wrap .suffix{ position:absolute; right:14px; top:50%; transform:translateY(-50%); font-family:var(--font-mono); font-size:12px; color:var(--titanium); pointer-events:none; }
+
+.select{ appearance:none; -webkit-appearance:none; cursor:pointer;
+  background-image:linear-gradient(45deg, transparent 50%, var(--red) 50%), linear-gradient(135deg, var(--red) 50%, transparent 50%);
+  background-position:calc(100% - 20px) center, calc(100% - 15px) center;
+  background-size:5px 5px, 5px 5px; background-repeat:no-repeat;
+  padding-right:38px;
+}
+
+textarea.input{ resize:vertical; min-height:110px; }
+
+.check-row{ display:flex; align-items:center; gap:10px; }
+.fake-checkbox{
+  width:20px; height:20px; border:1.5px solid var(--stroke); border-radius:3px; background:var(--surface-2);
+  display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;
+}
+input[type="checkbox"]{ display:none; }
+input[type="checkbox"]:checked + .fake-checkbox{ background:var(--red); border-color:var(--red); }
+input[type="checkbox"]:checked + .fake-checkbox::after{ content:''; width:5px; height:9px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg) translate(-1px,-1px); }
+
+.fake-radio{ width:20px; height:20px; border:1.5px solid var(--stroke); border-radius:50%; background:var(--surface-2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+input[type="radio"]{ display:none; }
+input[type="radio"]:checked + .fake-radio{ border-color:var(--red); }
+input[type="radio"]:checked + .fake-radio::after{ content:''; width:10px; height:10px; border-radius:50%; background:var(--red); }
+
+.toggle{ width:44px; height:24px; border-radius:20px; background:var(--stroke); position:relative; cursor:pointer; flex-shrink:0; transition:background .15s ease; }
+.toggle::after{ content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:var(--ink); top:3px; left:3px; transition:transform .15s ease; }
+input[type="checkbox"]:checked + .toggle{ background:var(--red); }
+input[type="checkbox"]:checked + .toggle::after{ transform:translateX(20px); }
+
+.label-inline{ font-size:14px; color:var(--ink-dim); }
+
+input[type="range"]{ -webkit-appearance:none; width:100%; height:4px; background:var(--stroke); border-radius:3px; }
+input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--red); cursor:pointer; box-shadow:0 0 0 4px rgba(210,0,28,0.2); }
+
+/* ============================================================
+   TABLE / STANDINGS
+   Used for weekly/season ranking and championship group tables.
+   ============================================================ */
+.table-wrap{ border:1px solid var(--stroke); border-radius: var(--radius-lg); overflow:hidden; overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; }
+thead th{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--titanium);
+  text-align:left; padding:14px 18px; background:var(--surface-2); border-bottom:1px solid var(--stroke);
+}
+tbody td{ padding:14px 18px; font-size:14px; border-bottom:1px solid var(--stroke-soft); }
+tbody tr:last-child td{ border-bottom:none; }
+tbody tr{ transition:background .12s ease; }
+tbody tr:hover{ background:var(--surface-2); }
+.pos-cell{ font-family:var(--font-mono); font-weight:700; color:var(--red); width:40px; }
+.driver-cell{ display:flex; align-items:center; gap:10px; font-weight:700; }
+.team-dot{ width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+.mono-data{ font-family:var(--font-mono); font-weight:700; letter-spacing:0.5px; }
+.caption{ font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--titanium); }
+
+/* ============================================================
+   CHARTS (engagement dashboard, Fase 4)
+   ============================================================ */
+.chart-card{ background:var(--surface); border:1px solid var(--stroke); border-radius: var(--radius-lg); padding:24px; }
+.chart-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.chart-head h3{ font-family:var(--font-display); font-style:italic; font-weight:700; font-size:20px; text-transform:uppercase; }
+.chart-canvas-wrap{ height:260px; }
+.legend-row{ display:flex; gap:18px; margin-top:14px; flex-wrap:wrap; }
+.legend-item{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--titanium); }
+.legend-dot{ width:9px; height:9px; border-radius:2px; }
+.chart-grid{ display:grid; grid-template-columns:1.4fr 1fr; gap:20px; }
+@media (max-width: 900px){ .chart-grid{ grid-template-columns:1fr; } }
+.gauge-wrap{ display:flex; align-items:center; gap:24px; }
+.gauge-canvas-box{ position:relative; width:160px; height:160px; flex-shrink:0; }
+.gauge-center{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.gauge-center b{ font-family:var(--font-mono); font-size:26px; }
+.gauge-center span{ font-size:10px; letter-spacing:1.5px; color:var(--titanium); text-transform:uppercase; }
+
+/* ============================================================
+   ADMIN SHELL (sidenav) — base for the admin panel layout.
+   ============================================================ */
+.shell{ display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+.sidenav{
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+  border-right:1px solid var(--stroke);
+  background:linear-gradient(180deg, var(--surface) 0%, var(--carbon) 100%);
+  padding:28px 0 40px;
+}
+.nav-group{ padding:0 12px; margin-bottom:4px; }
+.nav-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:2px; color:var(--titanium); text-transform:uppercase; padding:14px 12px 8px; }
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius: var(--radius); font-size:14px; font-weight:600;
+  color:var(--ink-dim); text-decoration:none; cursor:pointer; border-left:2px solid transparent;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.nav-item:hover{ background:var(--surface-2); color:var(--ink); }
+.nav-item.is-active{ background:var(--surface-2); color:var(--ink); border-left-color:var(--red); }
+@media (max-width: 860px){
+  .shell{ grid-template-columns:1fr; }
+  .sidenav{ position:relative; height:auto; display:flex; overflow-x:auto; padding:14px; border-right:none; border-bottom:1px solid var(--stroke); }
+  .nav-group{ display:flex; padding:0; gap:6px; }
+  .nav-label{ display:none; }
+}
+
+/* ============================================================
+   DECORATIVE: start lights (repurposed as a countdown, e.g. Caxetão
+   registration opening/closing — prd.md §9).
+   ============================================================ */
+.lights-rig{ display:flex; gap:10px; }
+.light-bulb{
+  width:22px; height:22px; border-radius:50%;
+  background:#2a1013; border:1px solid #3a1a1e;
+  box-shadow:inset 0 0 6px rgba(0,0,0,0.6);
+}
+.light-bulb.is-lit{ background:var(--red-bright); box-shadow:0 0 18px var(--red-bright), inset 0 0 6px rgba(0,0,0,0.2); }
