@@ -39,10 +39,13 @@ export async function signUp(_prevState: AuthActionState, formData: FormData): P
   }
 
   if (!data.session) {
-    return { success: "Conta criada. Confirme seu e-mail antes de entrar." };
+    return {
+      success:
+        "Conta criada. Confirme seu e-mail e aguarde a aprovação de um administrador antes de acessar o painel.",
+    };
   }
 
-  redirect("/admin/contas");
+  redirect("/admin/aguardando");
 }
 
 export async function signOut() {

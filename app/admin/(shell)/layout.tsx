@@ -13,6 +13,11 @@ export default async function AdminShellLayout({ children }: { children: React.R
     redirect("/admin/login");
   }
 
+  const { count: pendingCount } = await supabase
+    .from("admins")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
+
   return (
     <div className="shell">
       <nav className="sidenav">
@@ -27,6 +32,13 @@ export default async function AdminShellLayout({ children }: { children: React.R
           </Link>
           <Link className="nav-item" href="/admin/contas">
             Listar contas
+          </Link>
+        </div>
+        <div className="nav-group">
+          <div className="nav-label">Administradores</div>
+          <Link className="nav-item justify-between" href="/admin/solicitacoes">
+            <span>Solicitações pendentes</span>
+            {!!pendingCount && <span className="badge badge-red">{pendingCount}</span>}
           </Link>
         </div>
         <div className="nav-group mt-auto px-3">

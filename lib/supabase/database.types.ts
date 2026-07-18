@@ -81,18 +81,21 @@ export type Database = {
           email: string
           id: string
           name: string
+          status: string
         }
         Insert: {
           created_at?: string
           email: string
           id: string
           name: string
+          status?: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           name?: string
+          status?: string
         }
         Relationships: []
       }
@@ -568,6 +571,7 @@ export type Database = {
         Args: { p_tiktok_account_id: string }
         Returns: boolean
       }
+      is_approved_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

@@ -67,6 +67,10 @@ async function main() {
   });
   if (outsiderErr || !outsider.user) throw new Error(`create outsider failed: ${outsiderErr?.message}`);
 
+  // New admins default to 'pending' (20260718000018_admins_approval) — the
+  // owner needs to be 'approved' to call create_tiktok_account below.
+  await service.from("admins").update({ status: "approved" }).eq("id", owner.user.id);
+
   const ownerClient = await signIn(ownerEmail);
   const outsiderClient = await signIn(outsiderEmail);
   const anonClient = createClient<Database>(url, anonKey);

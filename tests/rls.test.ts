@@ -41,6 +41,13 @@ async function createSignedInUser(label: string): Promise<TestUser> {
   });
   if (error || !data.user) throw new Error(`create user ${label} failed: ${error?.message}`);
 
+  // New admins default to 'pending' (20260718000018_admins_approval) and
+  // can't call create_tiktok_account until an existing admin approves them
+  // — this suite tests cross-tenant isolation, not the approval gate
+  // itself, so fast-forward every test admin straight to 'approved'.
+  const { error: approveErr } = await service.from("admins").update({ status: "approved" }).eq("id", data.user.id);
+  if (approveErr) throw new Error(`approve user ${label} failed: ${approveErr.message}`);
+
   const client = createClient<Database>(url, anonKey);
   const { error: signInErr } = await client.auth.signInWithPassword({ email, password });
   if (signInErr) throw new Error(`signIn ${label} failed: ${signInErr.message}`);
