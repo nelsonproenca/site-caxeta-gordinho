@@ -30,6 +30,30 @@ export const Stat: Story = {
   ),
 };
 
+// Player ranking preview — used decoratively on the homepage hero (app/page.tsx)
+// to tease the ranking feature instead of generic hero art.
+export const Driver: Story = {
+  render: () => (
+    <Card className="card-driver max-w-52">
+      <div className="driver-top">
+        <div className="driver-number">01</div>
+        <div className="position-tag">P1</div>
+      </div>
+      <div>
+        <div className="driver-name">@fulano</div>
+        <div className="driver-team">Ranking da semana</div>
+      </div>
+      <div className="driver-bar-row">
+        <span>Pontos</span>
+        <div className="driver-bar">
+          <span style={{ width: "92%" }} />
+        </div>
+        <span>92%</span>
+      </div>
+    </Card>
+  ),
+};
+
 export const Grid: Story = {
   render: () => (
     <CardGrid>
