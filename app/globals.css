@@ -103,6 +103,16 @@ a{ color:inherit; }
 .btn-ghost{ background:transparent; color:var(--ink-dim); padding:13px 10px; }
 .btn-ghost:hover{ color:var(--ink); }
 
+/* Horizontal tab bar (account section nav) — .is-active gets a red
+   underline sitting on the wrapper's border-b, mirroring the sidenav's
+   .nav-item.is-active red accent. */
+.tab-link{ position:relative; }
+.tab-link.is-active{ color:var(--ink); }
+.tab-link.is-active::after{
+  content:""; position:absolute; left:14px; right:14px; bottom:-13px; height:2px;
+  background:var(--red); border-radius:1px;
+}
+
 .btn-yellow{ background:var(--yellow); color:var(--carbon); box-shadow:0 2px 0 #b3a800; }
 .btn-yellow:hover{ filter:brightness(1.05); }
 

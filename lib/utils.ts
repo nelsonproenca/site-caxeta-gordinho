@@ -60,6 +60,15 @@ export function saoPauloLocalToIso(localDateTime: string): string {
   return new Date(`${localDateTime}:00-03:00`).toISOString();
 }
 
+// "Now" in America/Sao_Paulo as a datetime-local-compatible string
+// ("YYYY-MM-DDTHH:mm"), for defaulting registration_opens_at when the UI
+// hides that field (close_rule 'count' — registration is assumed to open
+// immediately, since there's no closing deadline for it to be scheduled
+// against). Same fixed UTC-3 assumption as startOfTodayInSaoPaulo.
+export function nowInSaoPauloAsDatetimeLocal(): string {
+  return new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 16);
+}
+
 // Formats digits as a Brazilian phone number: (11) 91234-5678 (11 digits,
 // mobile with the leading 9) or (11) 1234-5678 (10 digits, landline).
 // Used to mask every WhatsApp field so users can't paste/type runaway digits.
