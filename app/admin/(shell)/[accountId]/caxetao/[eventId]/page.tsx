@@ -6,7 +6,8 @@ import { formatDate, formatDateTime } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RegisterPlayerForm } from "./register-player-form";
+import { ClosingCountdown } from "../closing-countdown";
+import { RegisterPlayerModal } from "./register-player-modal";
 
 const STATUS_LABEL: Record<string, string> = {
   scheduled: "Agendado",
@@ -71,22 +72,40 @@ export default async function CaxetaoEventPage({
 
   const activePrincipals = principals.filter((r) => r.status !== "cancelled" && r.status !== "no_show").length;
   const activeSubstitutes = substitutes.filter((r) => r.status !== "cancelled" && r.status !== "no_show").length;
+  const missingPrincipals = Math.max((synced.max_principals ?? 0) - activePrincipals, 0);
+
+  const thirdLine =
+    synced.status === "registrations_open" &&
+    (synced.close_rule === "count" ? (
+      <>Faltam {missingPrincipals} jogadores para encerrar as inscrições</>
+    ) : (
+      synced.registration_closes_at && <ClosingCountdown closesAt={synced.registration_closes_at} />
+    ));
 
   return (
     <div className="flex flex-col gap-6">
       <Card className="flex flex-row items-center justify-between">
         <div>
-          <span className="font-display italic font-bold text-xl uppercase">{formatDate(synced.event_date)}</span>
-          <p className="text-ink-dim text-sm">
-            Inscrições: {formatDateTime(synced.registration_opens_at)}
-            {synced.registration_closes_at ? ` – ${formatDateTime(synced.registration_closes_at)}` : ""}
-            {" · "}
-            {CLOSE_RULE_LABEL[synced.close_rule] ?? synced.close_rule}
-            {synced.max_principals ? ` · ${activePrincipals}/${synced.max_principals} principais` : ""}
-            {synced.max_substitutes ? ` · ${activeSubstitutes}/${synced.max_substitutes} suplentes` : ""}
-          </p>
+          <div className="font-display italic font-bold text-xl uppercase">
+            {formatDate(synced.event_date)} · {CLOSE_RULE_LABEL[synced.close_rule] ?? synced.close_rule}
+          </div>
+          <div className="text-ink-dim text-sm">
+            {synced.close_rule === "count" ? (
+              <>
+                {activePrincipals}/{synced.max_principals ?? "?"} principais
+                {synced.max_substitutes ? ` · ${activeSubstitutes}/${synced.max_substitutes} suplentes` : ""}
+              </>
+            ) : (
+              <>
+                Inscrições: {formatDateTime(synced.registration_opens_at)}
+                {synced.registration_closes_at ? ` – ${formatDateTime(synced.registration_closes_at)}` : ""}
+              </>
+            )}
+          </div>
+          {thirdLine && <div className="text-sm mt-1">{thirdLine}</div>}
         </div>
         <div className="flex items-center gap-3">
+          {synced.status !== "finished" && <RegisterPlayerModal eventId={eventId} accountId={accountId} />}
           <Badge variant={STATUS_VARIANT[synced.status] ?? "neutral"}>
             {STATUS_LABEL[synced.status] ?? synced.status}
           </Badge>
@@ -110,13 +129,6 @@ export default async function CaxetaoEventPage({
           )}
         </div>
       </Card>
-
-      {synced.status !== "finished" && (
-        <Card>
-          <h2 className="font-display italic font-bold text-xl uppercase mb-4">Inscrever jogador</h2>
-          <RegisterPlayerForm eventId={eventId} accountId={accountId} />
-        </Card>
-      )}
 
       <Card>
         <h2 className="font-display italic font-bold text-xl uppercase mb-4">Principais ({principals.length})</h2>

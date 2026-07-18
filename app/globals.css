@@ -203,6 +203,35 @@ a{ color:inherit; }
 .badge-yellow{ background:rgba(255,242,0,0.12); color:var(--yellow); border:1px solid rgba(255,242,0,0.4); }
 .badge-neutral{ background:var(--surface-2); color:var(--ink-dim); border:1px solid var(--stroke); }
 
+/* A <button> wearing badge-* classes (e.g. "+ Adicionar jogador" next to a
+   status badge) — same pill look, but interactive. */
+button.badge{ cursor:pointer; border-style:solid; transition:filter .12s ease; }
+button.badge:hover{ filter:brightness(1.25); }
+
+/* ============================================================
+   MODAL — native <dialog>-backed (components/ui/modal.tsx). The dialog
+   itself is an invisible full-viewport flex-centering frame, and
+   .modal-content is the actual visible card. Centering is done with flex,
+   not the UA stylesheet's `dialog:modal{ margin:auto }` — Tailwind's
+   Preflight resets margin to 0 in @layer base, and since @layer base always
+   loses to the UA stylesheet's own priority tier is even lower, Preflight's
+   margin:0 wins and silently kills that auto-centering, leaving the dialog
+   pinned to the top-left. Flex centering has no such dependency.
+   ============================================================ */
+.modal-overlay{
+  position:fixed; inset:0; margin:0; padding:0; max-width:none; max-height:none;
+  background:transparent; border:none;
+}
+.modal-overlay[open]{
+  display:flex; align-items:center; justify-content:center; width:100vw; height:100vh;
+}
+.modal-overlay::backdrop{ background:rgba(0,0,0,0.65); backdrop-filter:blur(2px); }
+.modal-content{
+  background:var(--surface); color:var(--ink); border:1px solid var(--stroke);
+  border-radius: var(--radius-lg); padding:24px; max-width:520px; width:calc(100vw - 48px);
+  max-height:calc(100vh - 48px); overflow-y:auto;
+}
+
 /* ============================================================
    FORMS
    ============================================================ */
