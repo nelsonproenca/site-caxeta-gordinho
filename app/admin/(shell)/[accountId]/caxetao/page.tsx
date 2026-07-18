@@ -1,33 +1,16 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { syncCaxetaoEventStatus } from "@/lib/caxetao";
+import {
+  syncCaxetaoEventStatus,
+  CAXETAO_STATUS_LABEL,
+  CAXETAO_STATUS_VARIANT,
+  CAXETAO_CLOSE_RULE_LABEL,
+} from "@/lib/caxetao";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CreateEventForm } from "./create-event-form";
-import { ClosingCountdown } from "./closing-countdown";
-
-const STATUS_LABEL: Record<string, string> = {
-  scheduled: "Agendado",
-  registrations_open: "Inscrições abertas",
-  registrations_closed: "Inscrições encerradas",
-  in_progress: "Em andamento",
-  finished: "Finalizado",
-};
-
-const STATUS_VARIANT: Record<string, "neutral" | "green" | "yellow" | "purple"> = {
-  scheduled: "neutral",
-  registrations_open: "green",
-  registrations_closed: "yellow",
-  in_progress: "purple",
-  finished: "neutral",
-};
-
-const CLOSE_RULE_LABEL: Record<string, string> = {
-  time: "Por tempo",
-  count: "Por quantidade",
-  both: "Tempo ou quantidade",
-};
+import { ClosingCountdown } from "@/components/closing-countdown";
 
 export default async function CaxetaoPage({
   params,
@@ -97,7 +80,7 @@ export default async function CaxetaoPage({
               <Card className="flex flex-row items-center justify-between">
                 <div>
                   <div className="font-display italic font-bold text-lg uppercase">
-                    {formatDate(event.event_date)} · {CLOSE_RULE_LABEL[event.close_rule] ?? event.close_rule}
+                    {formatDate(event.event_date)} · {CAXETAO_CLOSE_RULE_LABEL[event.close_rule] ?? event.close_rule}
                   </div>
                   <div className="text-ink-dim text-sm">
                     {event.close_rule === "count" ? (
@@ -113,8 +96,8 @@ export default async function CaxetaoPage({
                   </div>
                   {thirdLine && <div className="text-sm mt-1">{thirdLine}</div>}
                 </div>
-                <Badge variant={STATUS_VARIANT[event.status] ?? "neutral"}>
-                  {STATUS_LABEL[event.status] ?? event.status}
+                <Badge variant={CAXETAO_STATUS_VARIANT[event.status] ?? "neutral"}>
+                  {CAXETAO_STATUS_LABEL[event.status] ?? event.status}
                 </Badge>
               </Card>
             </Link>

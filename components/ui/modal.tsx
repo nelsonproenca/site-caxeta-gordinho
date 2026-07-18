@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 // Backed by the native <dialog> element — free backdrop, ESC-to-close, and
 // focus handling from the browser instead of hand-rolling those.
@@ -37,5 +38,19 @@ export function Modal({
     >
       <div className="modal-content">{children}</div>
     </dialog>
+  );
+}
+
+// Title + close-X row, identical across every modal in the app
+// (register-player-modal.tsx, caxetao-register-modal.tsx) — pulled out here
+// instead of copy-pasted at each call site.
+export function ModalHeader({ title, onClose }: { title: string; onClose: () => void }) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="font-display italic font-bold text-xl uppercase">{title}</h2>
+      <Button type="button" variant="icon" aria-label="Fechar" onClick={onClose}>
+        ✕
+      </Button>
+    </div>
   );
 }

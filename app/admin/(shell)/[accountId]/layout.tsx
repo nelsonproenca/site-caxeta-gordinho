@@ -1,7 +1,15 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { AccountTabs } from "./account-tabs";
+import { TabBar } from "@/components/ui/tab-bar";
+
+const TAB_SEGMENTS = [
+  { segment: "pontuacao", label: "Pontuação" },
+  { segment: "jogadores", label: "Jogadores" },
+  { segment: "lives", label: "Lives" },
+  { segment: "ranking", label: "Ranking" },
+  { segment: "caxetao", label: "Caxetão" },
+];
 
 export default async function AccountLayout({
   children,
@@ -33,7 +41,11 @@ export default async function AccountLayout({
         </h1>
         <p className="text-ink-dim">{account.display_name}</p>
       </div>
-      <AccountTabs accountId={accountId} />
+      <TabBar
+        items={TAB_SEGMENTS.map((t) => ({ href: `/admin/${accountId}/${t.segment}`, label: t.label }))}
+        matchNested
+        className="pb-3"
+      />
       {children}
     </div>
   );

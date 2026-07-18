@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Modal } from "@/components/ui/modal";
-import { Button } from "@/components/ui/button";
+import { Modal, ModalHeader } from "@/components/ui/modal";
 import { RegisterPlayerForm } from "./register-player-form";
 
 export function RegisterPlayerModal({ eventId, accountId }: { eventId: string; accountId: string }) {
@@ -14,12 +13,7 @@ export function RegisterPlayerModal({ eventId, accountId }: { eventId: string; a
         + Adicionar jogador
       </button>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display italic font-bold text-xl uppercase">Inscrever jogador</h2>
-          <Button type="button" variant="icon" aria-label="Fechar" onClick={() => setOpen(false)}>
-            ✕
-          </Button>
-        </div>
+        <ModalHeader title="Inscrever jogador" onClose={() => setOpen(false)} />
         <RegisterPlayerForm eventId={eventId} accountId={accountId} />
       </Modal>
     </>

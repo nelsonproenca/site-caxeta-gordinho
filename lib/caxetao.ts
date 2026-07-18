@@ -3,6 +3,31 @@ import type { Database } from "@/lib/supabase/database.types";
 
 type CaxetaoEvent = Database["public"]["Tables"]["caxetao_events"]["Row"];
 
+// Shared pt-BR labels/badge colors for caxetao_events.status and .close_rule
+// — was copy-pasted across the admin list, admin detail, and public pages;
+// kept here as the one place that knows every status/rule string.
+export const CAXETAO_STATUS_LABEL: Record<string, string> = {
+  scheduled: "Agendado",
+  registrations_open: "Inscrições abertas",
+  registrations_closed: "Inscrições encerradas",
+  in_progress: "Em andamento",
+  finished: "Finalizado",
+};
+
+export const CAXETAO_STATUS_VARIANT: Record<string, "neutral" | "green" | "yellow" | "purple"> = {
+  scheduled: "neutral",
+  registrations_open: "green",
+  registrations_closed: "yellow",
+  in_progress: "purple",
+  finished: "neutral",
+};
+
+export const CAXETAO_CLOSE_RULE_LABEL: Record<string, string> = {
+  time: "Por tempo",
+  count: "Por quantidade",
+  both: "Tempo ou quantidade",
+};
+
 // Registration windows close lazily, same pattern as closeStaleLiveSessions:
 // there's no cron/scheduler in this stack, so a "scheduled" event that's
 // reached registration_opens_at, or an open one past registration_closes_at,

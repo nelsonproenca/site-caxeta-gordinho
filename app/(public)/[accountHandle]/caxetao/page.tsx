@@ -1,23 +1,16 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { syncCaxetaoEventStatus } from "@/lib/caxetao";
+import { syncCaxetaoEventStatus, CAXETAO_STATUS_LABEL, CAXETAO_CLOSE_RULE_LABEL } from "@/lib/caxetao";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CaxetaoRegisterForm } from "./caxetao-register-form";
+import { ClosingCountdown } from "@/components/closing-countdown";
+import { CaxetaoRegisterModal } from "./caxetao-register-modal";
 
 // Safety-net revalidation for public pages under live load, same as the
 // ranking page — not the primary invalidation path, just an upper bound on
 // staleness (prd.md §11).
 export const revalidate = 20;
-
-const STATUS_LABEL: Record<string, string> = {
-  scheduled: "Agendado",
-  registrations_open: "Inscrições abertas",
-  registrations_closed: "Inscrições encerradas",
-  in_progress: "Em andamento",
-  finished: "Finalizado",
-};
 
 export default async function PublicCaxetaoPage({
   params,
@@ -61,6 +54,7 @@ export default async function PublicCaxetaoPage({
     .sort((a, b) => (a.queue_position ?? 0) - (b.queue_position ?? 0));
 
   const isOpen = synced?.status === "registrations_open";
+  const missingPrincipals = synced ? Math.max((synced.max_principals ?? 0) - principals.length, 0) : 0;
 
   return (
     <main className="flex flex-1 flex-col gap-6 p-8 max-w-2xl mx-auto w-full">
@@ -75,20 +69,40 @@ export default async function PublicCaxetaoPage({
         <>
           <Card className="flex flex-row items-center justify-between">
             <div>
-              <span className="font-semibold">{formatDate(synced.event_date)}</span>
+              <div className="font-display italic font-bold text-xl uppercase">
+                {formatDate(synced.event_date)} · {CAXETAO_CLOSE_RULE_LABEL[synced.close_rule] ?? synced.close_rule}
+              </div>
               <p className="text-ink-dim text-sm">
                 Inscrições: {formatDateTime(synced.registration_opens_at)}
                 {synced.registration_closes_at ? ` – ${formatDateTime(synced.registration_closes_at)}` : ""}
               </p>
             </div>
-            <Badge variant={isOpen ? "green" : "neutral"}>{STATUS_LABEL[synced.status] ?? synced.status}</Badge>
+            <Badge variant={isOpen ? "green" : "neutral"}>{CAXETAO_STATUS_LABEL[synced.status] ?? synced.status}</Badge>
           </Card>
 
+          {/* Big, hard-to-miss readout so players can tell at a glance
+              whether registration is still open, without reading the whole
+              card above — a countdown for time-ruled events, remaining
+              slots for count-ruled ones. */}
           {isOpen && (
-            <Card>
-              <h2 className="font-display italic font-bold text-xl uppercase mb-4">Inscreva-se</h2>
-              <CaxetaoRegisterForm eventId={synced.id} />
+            <Card className="card-stat text-center">
+              <div className="card-label">
+                {synced.close_rule === "count" ? "Vagas restantes" : "Fecha em"}
+              </div>
+              {synced.close_rule === "count" ? (
+                <div className="card-value">{missingPrincipals}</div>
+              ) : (
+                synced.registration_closes_at && (
+                  <ClosingCountdown closesAt={synced.registration_closes_at} size="lg" />
+                )
+              )}
             </Card>
+          )}
+
+          {isOpen && (
+            <div className="flex justify-center">
+              <CaxetaoRegisterModal eventId={synced.id} />
+            </div>
           )}
 
           {synced.status === "scheduled" && (
