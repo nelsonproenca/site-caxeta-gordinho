@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardGrid } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { getPeriodRanking, getRanking } from "@/lib/scoring/get-ranking";
 import { syncCaxetaoEventStatus } from "@/lib/caxetao";
 import { ClosingCountdown } from "@/components/closing-countdown";
@@ -104,8 +105,11 @@ export default async function Home() {
             first active account, hidden entirely (not faked) when there's
             nothing real to show. Hidden below `lg` either way so they never
             compete with the text for space. */}
-        {leader && (
-          <div className="hidden lg:block absolute top-16 right-14 w-52 rotate-6 drop-shadow-2xl">
+        {leader && featured && (
+          <Link
+            href={`/${featured.handle}/ranking`}
+            className="hidden lg:block absolute top-16 right-14 w-52 rotate-6 drop-shadow-2xl transition-transform hover:rotate-3 hover:scale-[1.03]"
+          >
             <Card className="card-driver">
               <div className="driver-top">
                 <div className="driver-number">01</div>
@@ -123,11 +127,15 @@ export default async function Home() {
                 <span>{leader.points}</span>
               </div>
             </Card>
-          </div>
+          </Link>
         )}
-        {caxetao && (
-          <div className="hidden lg:block absolute bottom-14 left-14 w-44 -rotate-6 drop-shadow-2xl">
-            <Card className="card-stat text-center">
+        {caxetao && featured && (
+          <Link
+            href={`/${featured.handle}/caxetao`}
+            className="hidden lg:flex absolute bottom-14 left-14 w-48 -rotate-6 drop-shadow-2xl transition-transform hover:-rotate-3 hover:scale-[1.03]"
+          >
+            <Card className="card-stat text-center w-full flex flex-col items-center gap-2">
+              <Badge variant="green">Inscrições abertas</Badge>
               {caxetao.closeRule === "count" ? (
                 <>
                   <div className="card-label">Vagas restantes</div>
@@ -142,7 +150,7 @@ export default async function Home() {
                 </>
               )}
             </Card>
-          </div>
+          </Link>
         )}
 
         <div className="relative flex flex-col items-center gap-7 px-6 sm:px-16 py-20 sm:py-28 text-center">
@@ -152,8 +160,7 @@ export default async function Home() {
           </div>
 
           <h1 className="font-display italic font-black uppercase text-ink leading-[0.95] text-[clamp(40px,8vw,88px)]">
-            Ranking, <span className="text-red">Caxetão</span>
-            <br />e Campeonatos
+            Caxeta do <span className="text-red">Gordinho do Baralho</span>
           </h1>
 
           <p className="max-w-md text-ink-dim text-lg">
