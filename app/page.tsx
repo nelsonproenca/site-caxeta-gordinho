@@ -103,12 +103,13 @@ export default async function Home() {
         {/* Decorative feature previews, framing the headline like real
             product cards instead of generic hero art — real data from the
             first active account, hidden entirely (not faked) when there's
-            nothing real to show. Hidden below `lg` either way so they never
-            compete with the text for space. */}
+            nothing real to show. Hidden below `xl` (1280px) so they only
+            show once the centered, width-capped headline (see h1 below) has
+            enough side clearance to not collide with them. */}
         {leader && featured && (
           <Link
             href={`/${featured.handle}/ranking`}
-            className="hidden lg:block absolute top-16 right-14 w-52 rotate-6 drop-shadow-2xl transition-transform hover:rotate-3 hover:scale-[1.03]"
+            className="hidden xl:block absolute top-10 right-6 w-52 rotate-6 drop-shadow-2xl transition-transform hover:rotate-3 hover:scale-[1.03]"
           >
             <Card className="card-driver">
               <div className="driver-top">
@@ -132,7 +133,7 @@ export default async function Home() {
         {caxetao && featured && (
           <Link
             href={`/${featured.handle}/caxetao`}
-            className="hidden lg:flex absolute bottom-14 left-14 w-48 -rotate-6 drop-shadow-2xl transition-transform hover:-rotate-3 hover:scale-[1.03]"
+            className="hidden xl:flex absolute bottom-10 left-6 w-48 -rotate-6 drop-shadow-2xl transition-transform hover:-rotate-3 hover:scale-[1.03]"
           >
             <Card className="card-stat text-center w-full flex flex-col items-center gap-2">
               <Badge variant="green">Inscrições abertas</Badge>
@@ -159,8 +160,10 @@ export default async function Home() {
             <span className="caption">Plataforma de Caxeta ao vivo</span>
           </div>
 
-          <h1 className="font-display italic font-black uppercase text-ink leading-[0.95] text-[clamp(40px,8vw,88px)]">
-            Caxeta do <span className="text-red">Gordinho do Baralho</span>
+          <h1 className="font-display italic font-black uppercase text-ink leading-[0.95] text-[clamp(40px,7vw,80px)] max-w-4xl">
+            Caxetão do
+            <br />
+            <span className="text-red">Gordinho do Baralho</span>
           </h1>
 
           <p className="max-w-md text-ink-dim text-lg">
