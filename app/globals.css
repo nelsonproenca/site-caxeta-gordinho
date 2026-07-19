@@ -23,12 +23,48 @@
   --green: #00C067;
   --purple: #B24BF3;
 
+  /* Always dark, regardless of theme — text on bright/saturated accent
+     backgrounds (.btn-yellow) needs to stay dark whether the page around it
+     is light or dark, unlike --carbon which flips with the theme below. */
+  --ink-on-accent: #0A0A0B;
+
+  /* Badge text tints — equal to the base accent color by default (pops on
+     dark mode's near-black tinted badge backgrounds); the light theme
+     below darkens these so they stay readable on a near-white tinted
+     background instead of washing out. */
+  --red-text: #ff5c5c;
+  --yellow-text: var(--yellow);
+  --green-text: var(--green);
+  --purple-text: var(--purple);
+
   --font-display: var(--next-font-display), 'Barlow Condensed', sans-serif;
   --font-body: var(--next-font-body), 'Titillium Web', sans-serif;
   --font-mono: var(--next-font-mono), 'JetBrains Mono', monospace;
 
   --radius: 2px;
   --radius-lg: 6px;
+}
+
+/* Opt-in light theme (components/theme-toggle.tsx sets data-theme on
+   <html>, defaulting to dark — see the color-scheme rule below). Every
+   component reads colors through the custom properties above via
+   `@theme inline`, so overriding them here is enough to reskin the whole
+   site without touching component CSS, with the few exceptions called out
+   next to --ink-on-accent and the *-text tokens above. */
+:root[data-theme="light"] {
+  --carbon: #F5F4F0;
+  --surface: #FFFFFF;
+  --surface-2: #F0EFEA;
+  --stroke: #DDDBD3;
+  --stroke-soft: #E8E6E0;
+  --ink: #1A1A1C;
+  --ink-dim: #5C5B57;
+  --titanium: #7A7873;
+
+  --red-text: #C4001A;
+  --yellow-text: #8A6D00;
+  --green-text: #0A8A4C;
+  --purple-text: #8A2FC7;
 }
 
 /* Expose the palette/type tokens as Tailwind utilities (bg-red, text-yellow,
@@ -56,8 +92,11 @@
 
 *{ box-sizing: border-box; }
 
-/* Single dark theme by design (no light-mode toggle) — see CLAUDE.md. */
+/* Dark by default; components/theme-toggle.tsx flips this (and the
+   data-theme attribute above) together so native UI (scrollbars, form
+   controls) matches the active theme too. */
 html{ color-scheme: dark; }
+html[data-theme="light"]{ color-scheme: light; }
 
 body{
   background: var(--carbon);
@@ -95,7 +134,7 @@ a{ color:inherit; }
 .btn-primary:hover{ background:var(--red-bright); box-shadow:0 2px 0 var(--red-dark), 0 10px 24px -6px rgba(255,40,0,0.55); }
 
 .btn-dark{ background:var(--ink); color:var(--carbon); box-shadow:0 2px 0 #8f8e89; }
-.btn-dark:hover{ background:#fff; }
+.btn-dark:hover{ filter:brightness(1.15); }
 
 .btn-outline{ background:transparent; color:var(--ink); border:1.5px solid var(--stroke); }
 .btn-outline:hover{ border-color:var(--red); color:var(--red); }
@@ -113,7 +152,7 @@ a{ color:inherit; }
   background:var(--red); border-radius:1px;
 }
 
-.btn-yellow{ background:var(--yellow); color:var(--carbon); box-shadow:0 2px 0 #b3a800; }
+.btn-yellow{ background:var(--yellow); color:var(--ink-on-accent); box-shadow:0 2px 0 #b3a800; }
 .btn-yellow:hover{ filter:brightness(1.05); }
 
 .btn-sm{ padding:9px 18px; font-size:13px; }
@@ -197,10 +236,10 @@ a{ color:inherit; }
   font-family:var(--font-mono); font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700;
   padding:5px 10px; border-radius:2px;
 }
-.badge-purple{ background:rgba(178,75,243,0.14); color:var(--purple); border:1px solid rgba(178,75,243,0.4); }
-.badge-green{ background:rgba(0,192,103,0.12); color:var(--green); border:1px solid rgba(0,192,103,0.4); }
-.badge-red{ background:rgba(210,0,28,0.14); color:#ff5c5c; border:1px solid rgba(210,0,28,0.5); }
-.badge-yellow{ background:rgba(255,242,0,0.12); color:var(--yellow); border:1px solid rgba(255,242,0,0.4); }
+.badge-purple{ background:rgba(178,75,243,0.14); color:var(--purple-text); border:1px solid rgba(178,75,243,0.4); }
+.badge-green{ background:rgba(0,192,103,0.12); color:var(--green-text); border:1px solid rgba(0,192,103,0.4); }
+.badge-red{ background:rgba(210,0,28,0.14); color:var(--red-text); border:1px solid rgba(210,0,28,0.5); }
+.badge-yellow{ background:rgba(255,242,0,0.12); color:var(--yellow-text); border:1px solid rgba(255,242,0,0.4); }
 .badge-neutral{ background:var(--surface-2); color:var(--ink-dim); border:1px solid var(--stroke); }
 
 /* A <button> wearing badge-* classes (e.g. "+ Adicionar jogador" next to a
@@ -239,7 +278,7 @@ button.badge:hover{ filter:brightness(1.25); }
 .field{ display:flex; flex-direction:column; gap:8px; }
 .field label{ font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-dim); }
 .field .hint{ font-size:12px; color:var(--titanium); }
-.field .error-text{ font-size:12px; color:#ff5c5c; font-weight:600; }
+.field .error-text{ font-size:12px; color:var(--red-text); font-weight:600; }
 
 .field-info{
   position:relative; display:inline-flex; align-items:center; justify-content:center;
@@ -267,7 +306,7 @@ button.badge:hover{ filter:brightness(1.25); }
 .input:focus, .select:focus, textarea.input:focus{
   outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(210,0,28,0.18);
 }
-.field.has-error .input{ border-color:#ff5c5c; box-shadow:0 0 0 3px rgba(255,92,92,0.12); }
+.field.has-error .input{ border-color:var(--red-text); box-shadow:0 0 0 3px rgba(255,92,92,0.12); }
 .field.is-valid .input{ border-color:var(--green); }
 
 .input-wrap{ position:relative; }
@@ -410,7 +449,7 @@ tbody tr:hover{ background:var(--surface-2); }
   position:relative; overflow:hidden;
   background:
     radial-gradient(ellipse at 20% -10%, rgba(210,0,28,0.35), transparent 55%),
-    linear-gradient(180deg, #0d0d0f 0%, var(--carbon) 100%);
+    linear-gradient(180deg, var(--surface) 0%, var(--carbon) 100%);
 }
 .hero-stripe{
   position:absolute; top:0; right:-10%; width:60%; height:100%;

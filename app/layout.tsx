@@ -1,7 +1,24 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Barlow_Condensed, Titillium_Web, JetBrains_Mono } from "next/font/google";
 import { AuthErrorWatcher } from "@/components/auth-error-watcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "./globals.css";
+
+// Runs before hydration (strategy="beforeInteractive") so the theme is
+// correct on first paint — setting data-theme only from ThemeToggle's own
+// useEffect would flash the default dark theme first for anyone who'd
+// picked light. suppressHydrationWarning on <html> below covers the
+// attribute this adds ahead of React's own render.
+const THEME_INIT_SCRIPT = `
+(function () {
+  try {
+    var theme = localStorage.getItem("theme") === "light" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = theme;
+  } catch (e) {}
+})();
+`;
 
 const displayFont = Barlow_Condensed({
   variable: "--next-font-display",
@@ -40,7 +57,17 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         <AuthErrorWatcher />
+        {/* Own strip above every page's own nav (not a floating overlay) —
+            guarantees it never sits on top of a page's own top-right
+            content, at the cost of a small amount of vertical space on
+            every screen. */}
+        <div className="flex justify-end px-4 py-2 border-b border-stroke">
+          <ThemeToggle />
+        </div>
         {children}
       </body>
     </html>
