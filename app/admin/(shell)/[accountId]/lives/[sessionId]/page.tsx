@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TableWrap, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
 import { AddParticipantForm } from "./add-participant-form";
-import { RecordResultForm } from "./record-result-form";
+import { QuickAddRow } from "./results-table";
 
 export default async function LiveSessionPage({
   params,
@@ -83,50 +83,56 @@ export default async function LiveSessionPage({
       </Card>
 
       <Card>
-        <h2 className="font-display italic font-bold text-xl uppercase mb-4">Lançar resultado</h2>
-        {scoringRules && scoringRules.length > 0 ? (
-          <RecordResultForm
-            sessionId={sessionId}
-            accountId={accountId}
-            participants={participants}
-            scoringRules={scoringRules}
-          />
-        ) : (
-          <p className="text-ink-dim text-sm">
+        <h2 className="font-display italic font-bold text-xl uppercase mb-4">Resultados</h2>
+        {!scoringRules || scoringRules.length === 0 ? (
+          <p className="text-ink-dim text-sm mb-4">
             Nenhuma regra de pontuação ativa.{" "}
             <Link href={`/admin/${accountId}/pontuacao`} className="text-red">
               Configure em Pontuação
             </Link>
             .
           </p>
+        ) : null}
+
+        <TableWrap>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Jogador</TableHeaderCell>
+                <TableHeaderCell>Resultado</TableHeaderCell>
+                <TableHeaderCell>Pontos</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {scoringRules && scoringRules.length > 0
+                ? participants.map((p) => (
+                    <QuickAddRow
+                      key={p.id}
+                      sessionId={sessionId}
+                      accountId={accountId}
+                      participant={p}
+                      scoringRules={scoringRules}
+                    />
+                  ))
+                : null}
+              {(results ?? []).map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell className="driver-cell">
+                    {r.players ? `${r.players.display_name} (@${r.players.tiktok_handle})` : "—"}
+                  </TableCell>
+                  <TableCell>{r.scoring_rules?.name ?? "—"}</TableCell>
+                  <TableCell className="mono-data">
+                    {r.points_awarded > 0 ? `+${r.points_awarded}` : r.points_awarded}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableWrap>
+        {participants.length === 0 && (results ?? []).length === 0 && (
+          <p className="text-ink-dim mt-4">Adicione participantes para começar a lançar resultados.</p>
         )}
       </Card>
-
-      <TableWrap>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Jogador</TableHeaderCell>
-              <TableHeaderCell>Resultado</TableHeaderCell>
-              <TableHeaderCell>Pontos</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(results ?? []).map((r) => (
-              <TableRow key={r.id}>
-                <TableCell className="driver-cell">
-                  {r.players ? `${r.players.display_name} (@${r.players.tiktok_handle})` : "—"}
-                </TableCell>
-                <TableCell>{r.scoring_rules?.name ?? "—"}</TableCell>
-                <TableCell className="mono-data">
-                  {r.points_awarded > 0 ? `+${r.points_awarded}` : r.points_awarded}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableWrap>
-      {(results ?? []).length === 0 && <p className="text-ink-dim">Nenhum resultado lançado ainda.</p>}
     </div>
   );
 }
