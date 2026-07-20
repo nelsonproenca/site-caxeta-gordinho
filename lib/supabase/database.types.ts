@@ -292,6 +292,81 @@ export type Database = {
           },
         ]
       }
+      match_result_edits: {
+        Row: {
+          action: string
+          created_at: string
+          edited_by: string
+          id: string
+          match_result_id: string | null
+          new_points_awarded: number | null
+          new_scoring_rule_id: string | null
+          previous_points_awarded: number
+          previous_scoring_rule_id: string | null
+          tiktok_account_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          edited_by: string
+          id?: string
+          match_result_id?: string | null
+          new_points_awarded?: number | null
+          new_scoring_rule_id?: string | null
+          previous_points_awarded: number
+          previous_scoring_rule_id?: string | null
+          tiktok_account_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          edited_by?: string
+          id?: string
+          match_result_id?: string | null
+          new_points_awarded?: number | null
+          new_scoring_rule_id?: string | null
+          previous_points_awarded?: number
+          previous_scoring_rule_id?: string | null
+          tiktok_account_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_result_edits_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_result_edits_match_result_id_fkey"
+            columns: ["match_result_id"]
+            isOneToOne: false
+            referencedRelation: "match_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_result_edits_new_scoring_rule_id_fkey"
+            columns: ["new_scoring_rule_id"]
+            isOneToOne: false
+            referencedRelation: "scoring_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_result_edits_previous_scoring_rule_id_fkey"
+            columns: ["previous_scoring_rule_id"]
+            isOneToOne: false
+            referencedRelation: "scoring_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_result_edits_tiktok_account_id_fkey"
+            columns: ["tiktok_account_id"]
+            isOneToOne: false
+            referencedRelation: "tiktok_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_results: {
         Row: {
           created_at: string

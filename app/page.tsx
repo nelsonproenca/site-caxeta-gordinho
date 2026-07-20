@@ -8,8 +8,8 @@ import { ClosingCountdown } from "@/components/closing-countdown";
 
 // Public landing page — the primary audience is players (no login: pick a
 // streamer, land on their public ranking/Caxetão/cadastro pages, see
-// [accountHandle]/layout.tsx for that nav). Admin access is a small nav-bar
-// link, not the main flow.
+// [accountHandle]/layout.tsx for that nav). Admin access ("Área Restrita")
+// lives in the global masthead (app/layout.tsx), not this page.
 export default async function Home() {
   const supabase = await createClient();
   const { data: accounts } = await supabase
@@ -88,15 +88,6 @@ export default async function Home() {
 
   return (
     <main className="flex flex-1 flex-col">
-      <nav className="flex items-center justify-between px-6 sm:px-10 py-5 border-b border-stroke">
-        <span className="font-display italic font-extrabold uppercase">
-          Caxeta <span className="text-red">Gordinho</span>
-        </span>
-        <Link href="/admin/login" className="btn btn-ghost btn-sm">
-          Sou administrador →
-        </Link>
-      </nav>
-
       <div className="hero">
         <div className="hero-stripe" />
 

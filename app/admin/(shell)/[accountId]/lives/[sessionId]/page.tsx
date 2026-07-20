@@ -6,9 +6,8 @@ import { closeStaleLiveSessions } from "@/lib/live-sessions";
 import { formatDateTime } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TableWrap, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
 import { AddParticipantForm } from "./add-participant-form";
-import { QuickAddRow } from "./results-table";
+import { ResultsSection } from "./results-table";
 
 export default async function LiveSessionPage({
   params,
@@ -40,7 +39,9 @@ export default async function LiveSessionPage({
       .order("points", { ascending: false }),
     supabase
       .from("match_results")
-      .select("id, points_awarded, created_at, players(display_name, tiktok_handle), scoring_rules(name), matches!inner(live_session_id)")
+      .select(
+        "id, player_id, scoring_rule_id, points_awarded, created_at, scoring_rules(name), matches!inner(live_session_id)",
+      )
       .eq("matches.live_session_id", sessionId)
       .order("created_at", { ascending: false }),
   ]);
@@ -92,45 +93,14 @@ export default async function LiveSessionPage({
             </Link>
             .
           </p>
-        ) : null}
-
-        <TableWrap>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>Jogador</TableHeaderCell>
-                <TableHeaderCell>Resultado</TableHeaderCell>
-                <TableHeaderCell>Pontos</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {scoringRules && scoringRules.length > 0
-                ? participants.map((p) => (
-                    <QuickAddRow
-                      key={p.id}
-                      sessionId={sessionId}
-                      accountId={accountId}
-                      participant={p}
-                      scoringRules={scoringRules}
-                    />
-                  ))
-                : null}
-              {(results ?? []).map((r) => (
-                <TableRow key={r.id}>
-                  <TableCell className="driver-cell">
-                    {r.players ? `${r.players.display_name} (@${r.players.tiktok_handle})` : "—"}
-                  </TableCell>
-                  <TableCell>{r.scoring_rules?.name ?? "—"}</TableCell>
-                  <TableCell className="mono-data">
-                    {r.points_awarded > 0 ? `+${r.points_awarded}` : r.points_awarded}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableWrap>
-        {participants.length === 0 && (results ?? []).length === 0 && (
-          <p className="text-ink-dim mt-4">Adicione participantes para começar a lançar resultados.</p>
+        ) : (
+          <ResultsSection
+            sessionId={sessionId}
+            accountId={accountId}
+            participants={participants}
+            results={results ?? []}
+            scoringRules={scoringRules}
+          />
         )}
       </Card>
     </div>

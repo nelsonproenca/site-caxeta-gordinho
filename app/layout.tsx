@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import Link from "next/link";
 import { Barlow_Condensed, Titillium_Web, JetBrains_Mono } from "next/font/google";
 import { AuthErrorWatcher } from "@/components/auth-error-watcher";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -61,12 +62,20 @@ export default function RootLayout({
           {THEME_INIT_SCRIPT}
         </Script>
         <AuthErrorWatcher />
-        {/* Own strip above every page's own nav (not a floating overlay) —
+        {/* Global masthead on every page (not a floating overlay) —
             guarantees it never sits on top of a page's own top-right
             content, at the cost of a small amount of vertical space on
             every screen. */}
-        <div className="flex justify-end px-4 py-2 border-b border-stroke">
-          <ThemeToggle />
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-stroke">
+          <Link href="/" className="font-display italic font-extrabold uppercase">
+            Caxetão do <span className="text-red">Gordinho</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/admin/login" className="btn btn-ghost btn-sm inline-flex items-center gap-2">
+              <span aria-hidden="true">🔒</span> Área Restrita
+            </Link>
+          </div>
         </div>
         {children}
       </body>
